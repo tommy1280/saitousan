@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>妻藤さんゲーム画面</h1>
+    <h1>神経衰弱画面</h1>
     <span v-for="(card, index) in push_cards" :key="index">
       <ul>
         <li id="playarea" v-bind:src="card">{{ card }}</li>
