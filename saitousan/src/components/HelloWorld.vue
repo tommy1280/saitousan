@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import HelloChild from "./HelloChild";
 export default {
   data() {
     return {};
