@@ -1,11 +1,14 @@
 <template>
   <div>
     <h1>神経衰弱画面</h1>
-    <span v-for="(card, index) in push_cards" :key="index">
+    <span v-for="(card, index) in cards" :key="index">
       <ul>
-        <li id="playarea" v-bind:src="card">{{ card }}</li>
+        <li v-on:click="open(index)" id="playarea" v-if="!isOpen">
+          {{ card.value }}
+        </li>
       </ul>
     </span>
+    <p>最下部</p>
   </div>
 </template>
 
@@ -16,20 +19,36 @@ export default {
   data: function () {
     return {
       cards: [],
-      push_cards: [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7],
+      value_cards: [1, 2, 3, 4, 5, 6, 7],
     };
   },
   methods: {
-    setCardImage: function (type) {
-      for (let i = 1; i < 14; i++) {
-        //let number = ("00" + i).slice(-2);
-        let push_value = push_cards[i - 1];
-        this.cards.push(push_value);
+    setCardImage: function () {
+      this.pre_cards = this.value_cards.concat(this.value_cards);
+      for (let i = 1; i < 15; i++) {
+        let card = {
+          isOpen: false,
+          value: this.pre_cards[i - 1],
+        };
+        this.cards.push(card);
       }
     },
+    //Fisher-Yates shuffleにより要素をランダムにシャッフルする
+    shuffle: function () {
+      for (var i = this.cards.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = this.cards[i];
+        this.cards[i] = this.cards[j];
+        this.cards[j] = tmp;
+      }
+    },
+    open: function (index) {
+      this.cards[index] = true;
+    },
   },
-  mounted() {
+  created() {
     this.setCardImage();
+    this.shuffle();
   },
 };
 </script>
