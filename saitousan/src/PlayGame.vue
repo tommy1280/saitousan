@@ -3,8 +3,13 @@
     <h1>神経衰弱画面</h1>
     <span v-for="(card, index) in cards" :key="index">
       <ul>
-        <li v-on:click="open(index)" id="playarea" v-if="!isOpen">
-          {{ card.value }}
+        <li v-on:click="open(index)" id="playarea">
+          <img
+            v-bind:src="card.isOpen ? card.cardInfo.front : card.cardInfo.back"
+            alt=""
+            width="22"
+            height="27"
+          />
         </li>
       </ul>
     </span>
@@ -28,7 +33,10 @@ export default {
       for (let i = 1; i < 15; i++) {
         let card = {
           isOpen: false,
-          value: this.pre_cards[i - 1],
+          cardInfo: {
+            front: this.pre_cards[i - 1],
+            back: require("./assets/logo.png"),
+          },
         };
         this.cards.push(card);
       }
@@ -43,7 +51,7 @@ export default {
       }
     },
     open: function (index) {
-      this.cards[index] = true;
+      this.cards[index].isOpen = !this.cards[index].isOpen;
     },
   },
   created() {
@@ -65,5 +73,7 @@ export default {
   align-items: center;
   justify-content: center;
   font-family: arial black;
+  color: blue;
+  background-color: #efefef;
 }
 </style>
