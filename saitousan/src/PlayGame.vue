@@ -40,6 +40,8 @@ export default {
             //カードの表裏
             front: this.pre_cards[i - 1],
             back: require("./assets/logo.png"),
+            //正解状況
+            isGot: null,
           },
         };
         this.cards.push(card);
@@ -60,15 +62,37 @@ export default {
       openCountByPlayer++;
 
       if (openCountByPlayer == 2) {
-        setTimeout(() => {
-          this.cards.forEach((card, index) => {
-            if (card.isOpen) {
-              this.cards[index].isOpen = false;
-            }
-          });
-          openCountByPlayer = 0;
-        }, 2500);
+        this.isMatched();
+        //不一致の場合に元の状態に戻す
+        this.reset();
+        //一致したら、表向きのままにする
       }
+    },
+    isMatched: function () {
+      let openCards = [];
+      this.cards.forEach((card, index) => {
+        if (card.isOpen && card.isGot == null) {
+          openCards.push({ card, index });
+        }
+      });
+
+      //値が一致している場合の情報を取得
+      let firstCard = openCards[0];
+      let secondCard = openCards[1];
+      if (firstCard.card.cardInfo.front == secondCard.card.cardInfo.front) {
+        this.cards[firstCard.index].isGot = true;
+        this.cards[secondCard.index].isGot = true;
+      }
+    },
+    reset: function () {
+      setTimeout(() => {
+        this.cards.forEach((card, index) => {
+          if (card.isOpen && card.isGot == null) {
+            this.cards[index].isOpen = false;
+          }
+        });
+        openCountByPlayer = 0;
+      }, 2500);
     },
   },
   created() {
