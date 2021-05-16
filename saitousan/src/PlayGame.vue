@@ -4,8 +4,10 @@
     <span v-for="(card, index) in cards" :key="index">
       <ul>
         <li v-on:click="open(index)" id="playarea">
+          <div v-if="card.isOpen" class="value">{{ card.cardInfo.front }}</div>
           <img
-            v-bind:src="card.isOpen ? card.cardInfo.front : card.cardInfo.back"
+            v-if="!card.isOpen"
+            v-bind:src="card.cardInfo.back"
             alt=""
             width="22"
             height="27"
@@ -34,6 +36,7 @@ export default {
         let card = {
           isOpen: false,
           cardInfo: {
+            //カードの表裏
             front: this.pre_cards[i - 1],
             back: require("./assets/logo.png"),
           },
@@ -75,5 +78,9 @@ export default {
   font-family: arial black;
   color: blue;
   background-color: #efefef;
+}
+
+.value {
+  color: red;
 }
 </style>
