@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>妻藤さん</h1>
+    <img class="img" src="../assets/logo.png" width="100" />
   </div>
 </template>
 

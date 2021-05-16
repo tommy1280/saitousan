@@ -1,10 +1,18 @@
 <template>
   <div>
-    <h1>神経衰弱画面</h1>
-    <span v-for="(card, index) in cards" :key="index">
+    <h1>神経衰弱</h1>
+    <h2>Clear : {{ clearPairs }}</h2>
+    <span class="card_list" v-for="(card, index) in cards" :key="index">
       <ul>
-        <li v-on:click="open(index)" id="playarea" v-if="!isOpen">
-          {{ card.value }}
+        <li v-on:click="open(index)" id="playarea">
+          <div v-if="card.isOpen" class="value">{{ card.cardInfo.front }}</div>
+          <img
+            v-if="!card.isOpen"
+            v-bind:src="card.cardInfo.back"
+            alt=""
+            width="44"
+            height="54"
+          />
         </li>
       </ul>
     </span>
@@ -14,6 +22,8 @@
 
 
 <script>
+let openCountByPlayer = 0;
+const PLAYER = "player";
 export default {
   name: "PlayGame",
   data: function () {
@@ -28,7 +38,13 @@ export default {
       for (let i = 1; i < 15; i++) {
         let card = {
           isOpen: false,
-          value: this.pre_cards[i - 1],
+          //正解状況
+          isGot: null,
+          cardInfo: {
+            //カードの表裏
+            front: this.pre_cards[i - 1],
+            back: require("./assets/logo.png"),
+          },
         };
         this.cards.push(card);
       }
@@ -43,7 +59,52 @@ export default {
       }
     },
     open: function (index) {
-      this.cards[index] = true;
+      if (openCountByPlayer + 1 > 2) return;
+      this.cards[index].isOpen = true;
+      openCountByPlayer++;
+
+      if (openCountByPlayer == 2) {
+        this.isMatched();
+        //不一致の場合に元の状態に戻す
+        this.reset();
+        //一致したら、表向きのままにする
+      }
+    },
+    isMatched: function () {
+      let openCards = [];
+      this.cards.forEach((card, index) => {
+        if (card.isOpen && card.isGot == null) {
+          openCards.push({ card, index });
+        }
+      });
+
+      //値が一致している場合の情報を取得
+      let firstCard = openCards[0];
+      let secondCard = openCards[1];
+      if (firstCard.card.cardInfo.front == secondCard.card.cardInfo.front) {
+        this.cards[firstCard.index].isGot = PLAYER;
+        this.cards[secondCard.index].isGot = PLAYER;
+      }
+    },
+    reset: function () {
+      setTimeout(() => {
+        this.cards.forEach((card, index) => {
+          if (card.isOpen && card.isGot == null) {
+            this.cards[index].isOpen = false;
+          }
+        });
+        openCountByPlayer = 0;
+      }, 1500);
+    },
+  },
+  computed: {
+    clearPairs: function () {
+      if (!this.cards || this.cards.length === 0) return;
+      return (
+        this.cards.filter((card) => {
+          return card.isGot === PLAYER;
+        }).length / 2
+      );
     },
   },
   created() {
@@ -57,13 +118,24 @@ export default {
 #playarea {
   float: left;
   margin: 5px;
-  width: 30px;
-  height: 50px;
+  width: 60px;
+  height: 100px;
   border: dashed 1px;
   cursor: poin;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: arial black;
+  color: blue;
+  background-color: #efefef;
+}
+
+.value {
+  color: red;
+  font-size: 40px;
+}
+
+.card_list {
+  text-align: center;
 }
 </style>
