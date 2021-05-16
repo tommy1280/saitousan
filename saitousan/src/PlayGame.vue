@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>神経衰弱</h1>
+    <h2>Clear : {{ clearPairs }}</h2>
     <span class="card_list" v-for="(card, index) in cards" :key="index">
       <ul>
         <li v-on:click="open(index)" id="playarea">
@@ -22,6 +23,7 @@
 
 <script>
 let openCountByPlayer = 0;
+const PLAYER = "player";
 export default {
   name: "PlayGame",
   data: function () {
@@ -36,12 +38,12 @@ export default {
       for (let i = 1; i < 15; i++) {
         let card = {
           isOpen: false,
+          //正解状況
+          isGot: null,
           cardInfo: {
             //カードの表裏
             front: this.pre_cards[i - 1],
             back: require("./assets/logo.png"),
-            //正解状況
-            isGot: null,
           },
         };
         this.cards.push(card);
@@ -80,8 +82,8 @@ export default {
       let firstCard = openCards[0];
       let secondCard = openCards[1];
       if (firstCard.card.cardInfo.front == secondCard.card.cardInfo.front) {
-        this.cards[firstCard.index].isGot = true;
-        this.cards[secondCard.index].isGot = true;
+        this.cards[firstCard.index].isGot = PLAYER;
+        this.cards[secondCard.index].isGot = PLAYER;
       }
     },
     reset: function () {
@@ -92,7 +94,17 @@ export default {
           }
         });
         openCountByPlayer = 0;
-      }, 2500);
+      }, 1500);
+    },
+  },
+  computed: {
+    clearPairs: function () {
+      if (!this.cards || this.cards.length === 0) return;
+      return (
+        this.cards.filter((card) => {
+          return card.isGot === PLAYER;
+        }).length / 2
+      );
     },
   },
   created() {
