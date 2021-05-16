@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1>神経衰弱画面</h1>
-    <span v-for="(card, index) in cards" :key="index">
+    <h1>神経衰弱</h1>
+    <span class="card_list" v-for="(card, index) in cards" :key="index">
       <ul>
         <li v-on:click="open(index)" id="playarea">
           <div v-if="card.isOpen" class="value">{{ card.cardInfo.front }}</div>
@@ -9,8 +9,8 @@
             v-if="!card.isOpen"
             v-bind:src="card.cardInfo.back"
             alt=""
-            width="22"
-            height="27"
+            width="44"
+            height="54"
           />
         </li>
       </ul>
@@ -21,6 +21,7 @@
 
 
 <script>
+let openCountByPlayer = 0;
 export default {
   name: "PlayGame",
   data: function () {
@@ -54,7 +55,20 @@ export default {
       }
     },
     open: function (index) {
-      this.cards[index].isOpen = !this.cards[index].isOpen;
+      if (openCountByPlayer + 1 > 2) return;
+      this.cards[index].isOpen = true;
+      openCountByPlayer++;
+
+      if (openCountByPlayer == 2) {
+        setTimeout(() => {
+          this.cards.forEach((card, index) => {
+            if (card.isOpen) {
+              this.cards[index].isOpen = false;
+            }
+          });
+          openCountByPlayer = 0;
+        }, 2500);
+      }
     },
   },
   created() {
@@ -68,8 +82,8 @@ export default {
 #playarea {
   float: left;
   margin: 5px;
-  width: 30px;
-  height: 50px;
+  width: 60px;
+  height: 100px;
   border: dashed 1px;
   cursor: poin;
   display: flex;
@@ -82,5 +96,10 @@ export default {
 
 .value {
   color: red;
+  font-size: 40px;
+}
+
+.card_list {
+  text-align: center;
 }
 </style>
